@@ -14,7 +14,7 @@ spec:
         opa:
           decision_logs:
             console: true
-        logLevel: debug
+        logLevel: info
         bootstrapPolicies:
           my-cool-service: |-
             package httpapi.authz
