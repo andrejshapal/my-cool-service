@@ -11,6 +11,10 @@ spec:
     targetRevision: 9.2.2
     helm:
       values: |
+        opa:
+          decision_logs:
+            console: true
+        
         bootstrapPolicies:
           authz: |-
             package httpapi.authz

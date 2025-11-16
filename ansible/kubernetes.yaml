@@ -39,6 +39,9 @@
         namespace: argocd
         kind: Service
         name: argocd-server
+        definition:
+          spec:
+            type: LoadBalancer
         state: patched
 
     - name: Get ArgoCD password
@@ -84,7 +87,7 @@
           spec:
             project: "default"
             source:
-              repoURL: "https://github.com/andrejshapal/local_dev_k8s.git"
+              repoURL: "https://github.com/andrejshapal/my-cool-service.git"
               path: "argocd"
               targetRevision: "master"
             destination:
