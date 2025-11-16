@@ -1,0 +1,103 @@
+---
+- name: Configure k8s
+  hosts: k8s
+  connection: local
+
+  tasks:
+    - name: Create namespace ArgoCD
+      kubernetes.core.k8s:
+        name: argocd
+        api_version: v1
+        kind: Namespace
+        state: present
+
+    - name: Install ArgoCD
+      kubernetes.core.k8s:
+        namespace: argocd
+        src: https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
+        state: present
+
+    - name: Make sure ArgoCD components are ready
+      kubernetes.core.k8s:
+        namespace: argocd
+        name: "{{ item }}"
+        kind: Deployment
+        state: present
+        wait: yes
+        wait_condition:
+          type: Available
+      loop:
+         - argocd-applicationset-controller
+         - argocd-dex-server
+         - argocd-notifications-controller
+         - argocd-redis
+         - argocd-repo-server
+         - argocd-server
+
+    - name: Switch ArgoCD SVC to LB
+      kubernetes.core.k8s:
+        namespace: argocd
+        kind: Service
+        name: argocd-server
+        state: patched
+
+    - name: Get ArgoCD password
+      kubernetes.core.k8s_info:
+        namespace: argocd
+        kind: Secret
+        name: argocd-initial-admin-secret
+      register: ARGOCD_SECRET
+
+    - name: Display ArgoCD password
+      debug:
+        msg: "{{ ARGOCD_SECRET.resources[0].data.password | b64decode }}"
+
+    - name: Get ArgoCD token
+      uri:
+        url: "https://localhost/api/v1/session"
+        method: POST
+        headers:
+          Content-Type: "application/json"
+        body_format: json
+        body:
+          username: admin
+          password: "{{ ARGOCD_SECRET.resources[0].data.password | b64decode }}"
+        validate_certs: false
+      register: ARGOCD_TOKEN
+
+    - name: Display ArgoCD token
+      debug:
+        var: ARGOCD_TOKEN.json.token
+
+    - name: Create ArgoCD main application
+      uri:
+        url: "https://localhost/api/v1/applications"
+        method: POST
+        headers:
+          Authorization: "Bearer {{ ARGOCD_TOKEN.json.token }}"
+          Content-Type: "application/json"
+        body_format: json
+        body:
+          metadata:
+            name: main
+            namespace: "argocd"
+          spec:
+            project: "default"
+            source:
+              repoURL: "https://github.com/andrejshapal/local_dev_k8s.git"
+              path: "argocd"
+              targetRevision: "master"
+            destination:
+              server: "https://kubernetes.default.svc"
+              namespace: "default"
+            syncPolicy:
+              automated:
+                prune: true
+                selfHeal: true
+        return_content: yes
+        validate_certs: no
+      register: response
+
+    - name: Display API response
+      debug:
+        var: response.content

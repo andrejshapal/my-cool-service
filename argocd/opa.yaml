@@ -1,0 +1,41 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: opa
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://open-policy-agent.github.io/kube-mgmt/charts
+    chart: opa-kube-mgmt
+    targetRevision: 9.2.2
+    helm:
+      values: |
+        bootstrapPolicies:
+          authz: |-
+            package httpapi.authz
+            
+            default allow := false
+            
+            allow if {
+                input.method == "GET"
+                input.path == ["api", "users"]
+                input.role in ["admin", "editor"]
+            }
+            
+            allow if {
+                input.method == "POST"
+                input.path == ["api", "users"]
+                input.role == "admin"
+            }
+
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: opa
+  syncPolicy:
+    automated:
+      enabled: true
+      prune: true
+    syncOptions:
+    - CreateNamespace=true
+

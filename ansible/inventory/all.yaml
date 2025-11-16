@@ -1,0 +1,7 @@
+  k8s:
+    hosts:
+      localhost
+  proxy:
+    hosts:
+      zabbix-proxy:
+        ansible_connection: docker
