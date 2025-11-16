@@ -14,7 +14,7 @@ spec:
         opa:
           decision_logs:
             console: true
-        
+        logLevel: debug
         bootstrapPolicies:
           authz: |-
             package httpapi.authz
