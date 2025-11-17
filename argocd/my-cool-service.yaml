@@ -12,11 +12,10 @@ spec:
       helm:
         values: |
           applicationName: 'generic-service'
-  
-          image:
-            repository: njuhaandrej/my-cool-service
-            tag: latest
           deployment:
+            image:
+              repository: njuhaandrej/my-cool-service
+              tag: latest
             persistence:
               enabled: true
               mountPVC: true
