@@ -23,6 +23,7 @@ spec:
               mountPath: /app/instance
             envFrom:
               my-cool-service-config:
+                nameSuffix: config
                 type: secret
           service:
             type: NodePort
