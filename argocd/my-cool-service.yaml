@@ -32,7 +32,7 @@ spec:
             storageSize: 20M
             mountPath: /app/instance
           service:
-            type: NodePort
+            type: LoadBalancer
             ports:
               - port: 5555
                 name: http
