@@ -49,16 +49,17 @@ spec:
       targetRevision: 0.1.0
       helm:
         values: |
-          mgmt-token: |-
-            apiVersion: v1
-            stringData:
-              mgmtToken: 8VcIglGoTbUWIA78DLITCuw5KhxfhohGWiSVxDGXS4spKwhAvjyIMrwd31695GYk
-            kind: Secret
-            metadata:
-              name: mgmt-token
-              annotations:
-                replicator.v1.mittwald.de/replicate-to: "my-cool-service"
-            type: Opaque
+          anyResources:
+            mgmt-token: |-
+              apiVersion: v1
+              stringData:
+                mgmtToken: 8VcIglGoTbUWIA78DLITCuw5KhxfhohGWiSVxDGXS4spKwhAvjyIMrwd31695GYk
+              kind: Secret
+              metadata:
+                name: mgmt-token
+                annotations:
+                  replicator.v1.mittwald.de/replicate-to: "my-cool-service"
+              type: Opaque
 
   destination:
     server: https://kubernetes.default.svc
