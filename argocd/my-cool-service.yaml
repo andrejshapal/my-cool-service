@@ -6,52 +6,54 @@ metadata:
 spec:
   project: default
   sources:
-    - repoURL: https://helm.nano-byte.net
-      chart: generic-service
-      targetRevision: 1.10.0
+    - repoURL: https://stakater.github.io/stakater-charts
+      chart: application
+      targetRevision: 6.14.0
       helm:
         values: |
-          fullname: 'generic-service'
+          applicationName: 'generic-service'
   
           image:
             repository: njuhaandrej/my-cool-service
             tag: latest
-          envFrom:
-            - secretRef:
-                name: my-cool-service-secret
-          persistence:
+          deployment:
+            persistence:
+              enabled: true
+              mountPVC: true
+              storageSize: 20M
+              mountPath: /app/instance
+            envFrom:
+              my-cool-service-secret:
+                type: secret
+          service:
+            type: NodePort
+            ports:
+              - port: 5555
+                name: http
+                protocol: TCP
+                targetPort: 5000
+          secret:
             enabled: true
-            size: 20M
-            mountPath: /app/instance
-          
-          ingress:
-            enabled: true
-            protocol: http
-            domains:
-              - my-cool-service
-            paths:
-              - path: /
-                pathType: Prefix
-                backend:
-                  service:
-                    name: my-cool-service
-                    port:
-                      number: 5000
+            files:
+              my-cool-service-secret:
+                stringData:
+                  OPA_HOST: opa.opa.svc
+                  ADMIN_PASS: 12345
 
-    - repoURL: https://kiwigrid.github.io
-      chart: any-resource
-      targetRevision: 0.1.0
-      helm:
-        values: |
-          my-cool-service-secret: |-
-            apiVersion: v1
-            stringData:
-              OPA_HOST: opa.opa.svc
-              ADMIN_PASS: 12345
-            kind: Secret
-            metadata:
-              name: my-cool-service-secret
-            type: Opaque
+#    - repoURL: https://kiwigrid.github.io
+#      chart: any-resource
+#      targetRevision: 0.1.0
+#      helm:
+#        values: |
+#          my-cool-service-secret: |-
+#            apiVersion: v1
+#            stringData:
+#              OPA_HOST: opa.opa.svc
+#              ADMIN_PASS: 12345
+#            kind: Secret
+#            metadata:
+#              name: my-cool-service-secret
+#            type: Opaque
 
   destination:
     server: https://kubernetes.default.svc
