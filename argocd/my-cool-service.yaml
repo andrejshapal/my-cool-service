@@ -20,6 +20,9 @@ spec:
               my-cool-service-config:
                 nameSuffix: config
                 type: secret
+            volumes:
+              tmp:
+               emptyDir: {}
             volumeMounts:
                 tmp:
                    mountPath: path
