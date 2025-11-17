@@ -44,7 +44,6 @@ spec:
               config:
                 data:
                   OPA_HOST: "opa-opa-kube-mgmt.opa.svc"
-                  OPA_SSL: "True"
                   ADMIN_PASS: "12345"
 
 #    - repoURL: https://kiwigrid.github.io
