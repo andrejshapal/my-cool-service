@@ -20,6 +20,10 @@ spec:
               my-cool-service-config:
                 nameSuffix: config
                 type: secret
+            volumeMounts:
+                tmp:
+                   mountPath: path
+                   subPath: /tmp
           persistence:
             enabled: true
             mountPVC: true
