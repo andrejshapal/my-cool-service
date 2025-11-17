@@ -6,9 +6,9 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: https://charts.appscode.com/stable/
-    chart: config-syncer
-    targetRevision: 0.15.3
+    repoURL: https://helm.mittwald.de
+    chart: kubernetes-replicator
+    targetRevision: 2.12.1
     helm:
       values: |
         opa:

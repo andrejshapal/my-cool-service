@@ -57,7 +57,7 @@ spec:
             metadata:
               name: mgmt-token
               annotations:
-                kubed.appscode.com/sync: ""
+                replicator.v1.mittwald.de/replicate-to: "my-cool-service"
             type: Opaque
 
   destination:
