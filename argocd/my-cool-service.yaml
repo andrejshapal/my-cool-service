@@ -26,7 +26,7 @@ spec:
             volumeMounts:
                 tmp:
                    mountPath: path
-                   subPath: /tmp
+                   subPath: tmp
           persistence:
             enabled: true
             mountPVC: true
