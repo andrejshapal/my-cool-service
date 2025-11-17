@@ -5,5 +5,9 @@ COPY . /app
 
 RUN pip install -r requirements.txt
 
+RUN adduser --system --uid 1000 --no-create-home nonroot
+USER 1000
+
 EXPOSE 5000
+
 CMD ["./scripts/entrypoint.sh"]

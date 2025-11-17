@@ -16,15 +16,15 @@ spec:
             image:
               repository: njuhaandrej/my-cool-service
               tag: latest
-            persistence:
-              enabled: true
-              mountPVC: true
-              storageSize: 20M
-              mountPath: /app/instance
             envFrom:
               my-cool-service-config:
                 nameSuffix: config
                 type: secret
+          persistence:
+            enabled: true
+            mountPVC: true
+            storageSize: 20M
+            mountPath: /app/instance
           service:
             type: NodePort
             ports:
