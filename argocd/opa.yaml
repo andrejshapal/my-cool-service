@@ -44,7 +44,7 @@ spec:
               mgmtToken:
                  secretName: mgmt-token
 
-    - repoURL: https://kiwigrid.github.io
+    - repoURL: https://charts.alekc.dev
       chart: any-resource
       targetRevision: 0.1.0
       helm:
