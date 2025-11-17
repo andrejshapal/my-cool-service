@@ -36,8 +36,8 @@ spec:
             files:
               my-cool-service-secret:
                 data:
-                  OPA_HOST: opa.opa.svc
-                  ADMIN_PASS: 12345
+                  OPA_HOST: "opa.opa.svc"
+                  ADMIN_PASS: "12345"
 
 #    - repoURL: https://kiwigrid.github.io
 #      chart: any-resource
