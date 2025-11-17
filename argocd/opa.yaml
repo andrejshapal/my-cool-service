@@ -14,6 +14,8 @@ spec:
         opa:
           decision_logs:
             console: true
+        certManager:
+          enabled: true
         logLevel: info
         bootstrapPolicies:
           my-cool-service: |-
