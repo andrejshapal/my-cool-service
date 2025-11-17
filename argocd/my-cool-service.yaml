@@ -11,7 +11,7 @@ spec:
       targetRevision: 6.14.0
       helm:
         values: |
-          applicationName: 'generic-service'
+          applicationName: 'my-cool-service'
           deployment:
             image:
               repository: njuhaandrej/my-cool-service
@@ -22,7 +22,7 @@ spec:
               storageSize: 20M
               mountPath: /app/instance
             envFrom:
-              my-cool-service-secret:
+              my-cool-service-config:
                 type: secret
           service:
             type: NodePort
@@ -34,7 +34,7 @@ spec:
           secret:
             enabled: true
             files:
-              my-cool-service-secret:
+              config:
                 data:
                   OPA_HOST: "opa.opa.svc"
                   ADMIN_PASS: "12345"
