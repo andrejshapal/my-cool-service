@@ -7,8 +7,9 @@ class OpaValidator:
     def __init__(self, port=8181):
         host = current_app.config.get("OPA_HOST")
         port = current_app.config.get("OPA_PORT")
+        ssl = current_app.config.get("OPA_SSL")
         try:
-            self.client = OpaClient(host=host, port=int(port))
+            self.client = OpaClient(host=host, port=int(port), ssl=bool(ssl))
         except Exception as e:
             current_app.logger.error(f"Failed to initialize OpaClient with host={host}, port={port}: {e}")
             raise

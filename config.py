@@ -12,6 +12,7 @@ class ProductionConfig(Config):
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     OPA_HOST = os.environ.get("OPA_HOST", "localhost")
     OPA_PORT = os.environ.get("OPA_PORT", 8181)
+    OPA_SSL = os.environ.get("OPA_SSL", False)
 
     ADMIN_PASS = os.environ.get("ADMIN_PASS", "12345")
 
