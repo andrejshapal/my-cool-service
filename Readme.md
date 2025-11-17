@@ -12,6 +12,7 @@
     ```
     $ python3 -m venv-ansible
     $ source venv-ansible/bin/activate
+    $ cd ansible
     $ ansible-galaxy install -r requirements.yml
     $ pip install -r requirements.txt
     $ ansible-playbook -i inventory/all.yaml kubernetes.yaml
