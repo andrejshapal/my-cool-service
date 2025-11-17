@@ -15,6 +15,11 @@ spec:
           decision_logs:
             console: true
         useHttps: false
+        startupProbe:
+          httpGet:
+            path: /health
+            port: 8181
+            scheme: HTTP
         logLevel: info
         bootstrapPolicies:
           my-cool-service: |-
