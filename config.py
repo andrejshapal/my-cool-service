@@ -13,6 +13,7 @@ class ProductionConfig(Config):
     OPA_HOST = os.environ.get("OPA_HOST", "localhost")
     OPA_PORT = os.environ.get("OPA_PORT", 8181)
     OPA_SSL = os.environ.get("OPA_SSL", False)
+    OPA_TOKEN = os.environ.get("OPA_TOKEN", "")
 
     ADMIN_PASS = os.environ.get("ADMIN_PASS", "12345")
 

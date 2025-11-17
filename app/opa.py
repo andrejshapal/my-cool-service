@@ -8,8 +8,10 @@ class OpaValidator:
         host = current_app.config.get("OPA_HOST")
         port = current_app.config.get("OPA_PORT")
         ssl = current_app.config.get("OPA_SSL")
+        token = current_app.config.get("OPA_TOKEN")
+        headers = {"Authorization": f"Bearer {token}"} if token else None
         try:
-            self.client = OpaClient(host=host, port=int(port), ssl=bool(ssl))
+            self.client = OpaClient(host=host, port=int(port), ssl=bool(ssl), headers=headers)
         except Exception as e:
             current_app.logger.error(f"Failed to initialize OpaClient with host={host}, port={port}: {e}")
             raise

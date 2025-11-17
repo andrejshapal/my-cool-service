@@ -1,0 +1,52 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: replicator
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://charts.appscode.com/stable/
+    chart: config-syncer
+    targetRevision: 0.15.3
+    helm:
+      values: |
+        opa:
+          decision_logs:
+            console: true
+        useHttps: false
+        mgmt:
+          startupProbe:
+            httpGet:
+              path: /health
+              port: 8181
+              scheme: HTTP
+        logLevel: info
+        bootstrapPolicies:
+          my-cool-service: |-
+            package httpapi.authz
+            
+            default allow := false
+            
+            allow if {
+                input.method == "GET"
+                input.path == ["api", "users"]
+                input.role in ["admin", "editor"]
+            }
+            
+            allow if {
+                input.method == "POST"
+                input.path == ["api", "users"]
+                input.role == "admin"
+            }
+
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: tools
+  syncPolicy:
+    automated:
+      enabled: true
+      prune: true
+    syncOptions:
+    - CreateNamespace=true
+
