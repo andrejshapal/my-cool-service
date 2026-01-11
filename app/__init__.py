@@ -1,13 +1,16 @@
 from flask import Flask
 
 from app.api import api_bp
-from app.extensions import db, bcrypt, ma, migrate
+from app.extensions import db, bcrypt, ma, migrate, jwt, socketio
+from app.models.problems import Problem
 from config import config_by_name
+import logging
 from flask_migrate import Migrate
 
 def create_app(config_name="default"):
     app = Flask(__name__)
     app.config.from_object(config_by_name[config_name])
+    app.logger.setLevel(logging.DEBUG)
     with app.app_context():
         register_extensions(app)
         app.register_blueprint(api_bp, url_prefix="/api")
@@ -18,3 +21,6 @@ def register_extensions(app):
     bcrypt.init_app(app)
     ma.init_app(app)
     migrate.init_app(app, db)
+    jwt.init_app(app)
+    socketio.init_app(app)
+

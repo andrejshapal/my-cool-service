@@ -1,59 +1,44 @@
-from functools import wraps
-
 from flask import request, current_app, abort
+from flask_jwt_extended import jwt_required, get_jwt
 from flask_restx import fields, Resource, Namespace
 
 from app.extensions import db
-from app.auth import auth
-from app.models import User
-from app.opa import OpaValidator
-from app.schema import UserRequestSchema
+from app.models.users import User
+from app.schemas.user import UserRequestSchema
 
-ns = Namespace('users', description='Users related operations')
+ns_users = Namespace('users', description='Users related operations')
 
 user_schema = UserRequestSchema()
 
-user_model_response = ns.model('UserResponse', {
+user_model_response = ns_users.model('UserResponse', {
     'name': fields.String(description='Username'),
     'email': fields.String(description='Email address')
 })
 
-user_model_request = ns.model('UserRequest', {
+user_model_request = ns_users.model('UserRequest', {
     'name': fields.String(description='Username', required=True),
     'email': fields.String(description='Email address', required=True),
     'role': fields.String(description='Admin or editor', required=True),
     'password': fields.String(description='User password', required=True)
 })
 
-def basic_auth_required(f):
-    @wraps(f)
-    def wrapper(*args, **kwargs):
-        login_data = request.authorization
-        path = request.path
-        method = request.method
-        if login_data:
-            user = auth(login_data.get('username'), login_data.get('password'))
-            if user:
-                o = OpaValidator()
-                if o.validate_call(user.name, user.email, user.role_name, method, path):
-                    return f(*args, **kwargs)
-                abort(401, "Failed to validate user role")
-        current_app.logger.error("Unauthorized access attempt")
-        abort(401, "Failed authentication")
-    return wrapper
-
-@ns.doc(responses={401: 'Not Authorized', 200: 'Success'}, security='basicAuth')
-@ns.route('/')
+@ns_users.doc(responses={401: 'Not Authorized', 200: 'Success'}, security='Bearer')
+@ns_users.route('/')
 class Users(Resource):
-    method_decorators = [basic_auth_required]
-    @ns.marshal_list_with(user_model_response, code=200)
+    @jwt_required()
+    @ns_users.marshal_list_with(user_model_response, code=200)
     def get(self):
         """Returns user list as JSON"""
+        # get_jwt()
         return User.query.all()
 
-    @ns.marshal_with(user_model_response, code=200)
-    @ns.expect(user_model_request, validate=True)
+    @jwt_required()
+    @ns_users.marshal_with(user_model_response, code=200)
+    @ns_users.expect(user_model_request, validate=True)
     def post(self):
+        claims = get_jwt()
+        if claims['role'] != 'admin':
+            abort(401)
         data = request.get_json()
         try:
             validated_data = user_schema.load(data)

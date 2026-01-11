@@ -1,7 +1,7 @@
 from marshmallow import Schema, fields, validates, ValidationError
 from marshmallow.validate import Length
 
-from app.models import User
+from app.models.users import User
 
 class UserRequestSchema(Schema):
     name = fields.String(required=True)
